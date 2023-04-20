@@ -5,12 +5,6 @@
 
 using namespace std;
 
-ostream& operator << (ostream& out, const Fraction& frac)
-{
-	out << frac.numerator << "/" << frac.denominator;
-	return out;
-}
-
 Fraction::Fraction(int numerator , int denominator) {
 
 	if (denominator == 0) {
@@ -75,7 +69,8 @@ Fraction Fraction:: operator+(float const& obj) const{
 	// The / operator to divide two fractions and return their quotient as another fraction in reduced form.
 	Fraction Fraction::  operator/(Fraction const& obj) const{
 		Fraction a(5,3);
-		return a;}
+		return a;
+	}
 
 	Fraction Fraction::  operator/(float const& obj) const{
 		Fraction a(5,3);
@@ -133,8 +128,42 @@ Fraction Fraction:: operator+(float const& obj) const{
 
 	// The ++ and -- operator that adds (or substracts) 1 to the fraction. implement both pre and post fix.
 	Fraction Fraction::  operator++() const{
-		Fraction a(5,3);
-		return a;
+		// bool case_a = typeid(this->numerator) == typeid(int) && typeid(this->denominator) == typeid(int);
+		// bool case_b = typeid(this->numerator) == typeid(int) && typeid(this->denominator) == typeid(float);
+		// bool case_c = typeid(this->numerator) == typeid(float) && typeid(this->denominator) == typeid(int);
+		// bool case_d = typeid(this->numerator) == typeid(float) && typeid(this->denominator) == typeid(float);
+		// int num, den;
+		// float num, den;
+
+		// num = this->numerator;
+		// den = this->denominator;
+		// num += den;
+		// den += den;
+
+		// Fraction new_obj(num,den);
+
+		// if (case_a)
+		// {
+		// 	num = this->numerator;
+		// 	den = this->denominator;
+		// 	num += den;
+		// 	den += den;
+
+		// }
+		// else if (case_b)
+		// {
+		// 	/* code */
+		// }
+		// else if (case_c)
+		// {
+		// 	/* code */
+		// }
+		// else{
+
+		// }
+		
+		Fraction new_obj(1,1);
+		return new_obj;
 	}
 
 	Fraction Fraction::  operator--() const{
@@ -143,23 +172,19 @@ Fraction Fraction:: operator+(float const& obj) const{
 	}
 
 	// The << operator to print a fraction to an output stream in the format “numerator/denominator”.
-	Fraction Fraction::  operator<<(Fraction const& obj) const{
-		Fraction a(5,3);
-		return a;
-	}
-
-	Fraction Fraction::  operator<<(float const& obj) const{
-		Fraction a(5,3);
-		return a;
+	ostream& operator << (ostream& out, const Fraction& frac)
+	{
+		out << frac.numerator << "/" << frac.denominator;
+		return out;
 	}
 
 	// The >> operator to read a fraction from an input stream by taking two integers as input. 
-	Fraction Fraction::  operator>>(Fraction const& obj) const{
-		Fraction a(5,3);
-		return a;
-	}
-
-	Fraction Fraction::  operator>>(float const& obj) const{
-		Fraction a(5,3);
-		return a;
+	istream& operator>>(istream& in, Fraction& frac)
+	{
+    	int numerator, denominator;
+    	in >> numerator;
+    	in.ignore(1);
+    	in >> denominator;
+    	frac = Fraction(numerator, denominator);
+    	return in;
 	}

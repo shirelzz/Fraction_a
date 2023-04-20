@@ -33,8 +33,9 @@ public:
 	Fraction operator-(float const& obj) const;
 
 	//* The * operator to multiply two fractions and return their product as another fraction in reduced form.
-	Fraction operator*(Fraction const& obj) const;
-	Fraction operator*(float const& obj) const;
+	Fraction operator*(const Fraction& obj) const;
+	Fraction operator*(const float& obj) const;
+
 
 	// The / operator to divide two fractions and return their quotient as another fraction in reduced form.
 	Fraction operator/(Fraction const& obj) const;
@@ -62,13 +63,13 @@ public:
 
 	Fraction operator--() const;
 
-	// The << operator to print a fraction to an output stream in the format “numerator/denominator”.
-	Fraction operator<<(Fraction const& obj) const;
-	Fraction operator<<(float const& obj) const;
+	// // The << operator to print a fraction to an output stream in the format “numerator/denominator”.
+	// Fraction operator<<(Fraction const& obj) const;
+	// Fraction operator<<(float const& obj) const;
 
-	// The >> operator to read a fraction from an input stream by taking two integers as input. 
-	Fraction operator>>(Fraction const& obj) const;
-	Fraction operator>>(float const& obj) const;
+	// // The >> operator to read a fraction from an input stream by taking two integers as input. 
+	// Fraction operator>>(Fraction const& obj) const;
+	// Fraction operator>>(float const& obj) const;
 
 
 };
