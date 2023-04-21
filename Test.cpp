@@ -65,20 +65,20 @@ TEST_CASE("Subtraction")
 
 }
 
-// TEST_CASE("Multiplication")
-// {
-//     Fraction a(3,14);
-//     Fraction b(-12,37);
-//     Fraction c(2.2,8);
-//     Fraction d(2.341,2);
+TEST_CASE("Multiplication")
+{
+    Fraction a(3,14);
+    Fraction b(-12,37);
+    Fraction c(2.2,8);
+    Fraction d(2.341,2);
 
-//     CHECK(a*b == -18/259);
-//     CHECK(a*c == 33/560);
-//     CHECK(b*c == -33/370);
-//     CHECK(a*d == 7023/28000);
-//     CHECK(b*d == -7523/1500);
+    CHECK(a*b == -18/259);
+    CHECK(a*c == 33/560);
+    CHECK(b*c == -33/370);
+    CHECK(a*d == 7023/28000);
+    CHECK(b*d == -7523/1500);
     
-// }
+}
 
 TEST_CASE("Division")
 {
