@@ -5,17 +5,12 @@
 
 using namespace std;
 
-Fraction::Fraction(int numerator , int denominator):
+Fraction::Fraction(int numerator, int denominator):
 //List initialization so that the variables won't have garbage values
 numerator(numerator), denominator(denominator)
 {
-	
-}
-
-Fraction::Fraction(int numerator , int denominator) {
-
 	if (denominator == 0) {
-		throw runtime_error("Denominator cannot be zero.");
+		throw runtime_error("Denominator is zero. What a loser");
 	}
 
 	int gcd = get_gcd(abs(numerator), abs(denominator));
@@ -26,7 +21,25 @@ Fraction::Fraction(int numerator , int denominator) {
 		this->numerator *= -1;
 		this->denominator *= -1;
 	}
+	
 }
+
+// Fraction::Fraction(int numerator , int denominator) {
+
+// 	if (denominator == 0) {
+// 		throw runtime_error("Denominator cannot be zero.");
+// 	}
+
+// 	int gcd = get_gcd(abs(numerator), abs(denominator));
+// 	this->numerator = numerator / gcd;
+// 	this->denominator = denominator / gcd;
+
+// 	if (this->denominator < 0) {
+// 		this->numerator *= -1;
+// 		this->denominator *= -1;
+// 	}
+// }
+
 int Fraction::get_numerator() const { return numerator; }
 
 int Fraction::get_denominator() const { return denominator; }
@@ -38,6 +51,29 @@ int Fraction::get_gcd(int a, int b) const {
 	}
 	return get_gcd(b, a % b);
 }
+
+float Fraction::fractionToFloat() const{
+	return (float) this->numerator / (float) this->denominator;
+}
+
+// Fraction Fraction::floatToFraction(float f){
+
+// }
+
+void Fraction:: advance(){
+	this->numerator += this->denominator;
+	int gcd = get_gcd(abs(this->numerator), abs(this->denominator));
+	this->numerator /= gcd;
+	this->denominator /= gcd;
+}
+
+void Fraction::prev(){
+	this->numerator -= this->denominator;
+	int gcd = get_gcd(abs(this->numerator), abs(this->denominator));
+	this->numerator /= gcd;
+	this->denominator /= gcd;
+}
+
 
 // The + operator to add two fractions and return their sum as another fraction in reduced form.
 Fraction Fraction:: operator+(Fraction const& obj) const{ // a+b
@@ -175,10 +211,15 @@ const Fraction operator+(const float& f, const Fraction& frac){ //7+a - friend m
 
 
 	Fraction &Fraction::operator--(){
+		prev();
+		return *this;
 
 	}  //prefix
 
 	const Fraction Fraction:: operator--(int){
+		Fraction res(*this);
+		prev();
+		return res;
 
 	} //postfix
 

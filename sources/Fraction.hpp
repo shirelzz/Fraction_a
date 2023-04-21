@@ -12,10 +12,13 @@ private:
 	int numerator;
 	int denominator;
 	void advance();
+	void prev();
+	float fractionToFloat() const;
+	// Fraction floatToFraction(float f);
 
 public:
 
-	Fraction(int numerator = 0 , int denominator = 1);
+	Fraction(int numerator = 0, int denominator = 1);
 
 	int get_numerator() const;
 
