@@ -14,6 +14,7 @@ private:
 	void advance();
 	void prev();
 	void reduce();
+	void floatToFraction(float f);
 
 public:
 
@@ -45,13 +46,13 @@ public:
 	//* The * operator to multiply two fractions and return their product as another fraction in reduced form.
 	Fraction operator*(const Fraction& obj) const;
 	Fraction operator*(const float& obj) const;
-	Fraction operator*(int const& obj) const;
+	// Fraction operator*(int const& obj) const;
 	friend const Fraction operator*(const float& f, const Fraction& frac);
 
 	// The / operator to divide two fractions and return their quotient as another fraction in reduced form.
 	Fraction operator/(Fraction const& obj) const;
 	Fraction operator/(float const& obj) const;
-	Fraction operator/(int const& obj) const;
+	// Fraction operator/(int const& obj) const;
 	friend const Fraction operator/(const float& f, const Fraction& frac);
 
 	// The == operator to compare two fractions for equality and return true or false.

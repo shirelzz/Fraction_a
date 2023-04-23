@@ -13,27 +13,8 @@ Fraction::Fraction(int numerator, int denominator) : // List initialization so t
 	{
 		throw runtime_error("Denominator is zero. What a loser");
 	}
-
 	reduce();
-
 }
-
-// Fraction::Fraction(float num){
-// 	if (num == 0){
-// 		this->numerator = (int)(num * 1000);
-// 		this->denominator = 1000;
-// 	}
-// 	else{
-// 		this->numerator = (int)(num * 1000);
-// 		this->denominator = 1000;
-// 		reduce();
-// 	}
-// }
-
-// Fraction::Fraction(int num){
-// 	this->numerator = num;
-// 	this->denominator = 1;
-// }
 
 // Fraction::operator float() const{
 // 	return (float)this->numerator / (float)this->denominator;
@@ -81,29 +62,36 @@ void Fraction::prev()
 	this->denominator /= gcd;
 }
 
+void Fraction::floatToFraction(float f){
+	if(f == 0){
+		this->numerator = 0;
+		this->denominator = 1;
+	}
+	else{
+		this->numerator = (int)(f * 1000);
+		this->denominator = 1000;
+		reduce();
+	}
+}
+
+
 // The + operator to add two fractions and return their sum as another fraction in reduced form.
 Fraction Fraction::operator+(Fraction const &obj) const
 { // a+b
 	Fraction result(*this);
-	result.numerator = this->numerator + obj.numerator;
-	result.denominator = this->denominator + obj.denominator;
+	result.numerator = this->numerator * obj.denominator + obj.numerator * this->denominator;
+	result.denominator = this->denominator * obj.denominator;
 	result.reduce();
 	return result;
 }
 
 Fraction Fraction::operator+(float const &obj) const
 { // a+7
-	float result = (float)(this->numerator / this->denominator) + obj;
-    return Fraction(1,1);
+	Fraction result(0,1);
+	float sub = (float)this->numerator / (float)this->denominator + obj;
+	result.floatToFraction(sub);
+    return result;
 }
-
-// Fraction Fraction::operator+(const int &obj) const{
-// 	Fraction result(*this);
-// 	result.numerator = this->numerator + obj * this->denominator;
-// 	result.reduce();
-// 	return result;
-// }
-
 
 const Fraction operator+(const float &f, const Fraction &frac)
 { // 7+a - friend method
@@ -122,20 +110,15 @@ Fraction Fraction::operator-(Fraction const &obj) const
 
 Fraction Fraction::operator-(float const &obj) const
 {
-	float result = (float)(this->numerator / this->denominator) - obj;
-    return Fraction(1,1);
+	Fraction result(0,1);
+	float sub = (float)this->numerator / (float)this->denominator - obj;
+	result.floatToFraction(sub);
+    return result;
 }
-
-// Fraction Fraction::operator-(int const &obj) const{
-//     Fraction result(*this);
-//     result.numerator -= obj * result.denominator;
-//     result.reduce();
-//     return result;
-// }
 
 const Fraction operator-(const float &f, const Fraction &frac)
 {
-	return Fraction(1, 1);
+	return frac - f;
 }
 
 //* The * operator to multiply two fractions and return their product as another fraction in reduced form.
@@ -150,14 +133,9 @@ Fraction Fraction::operator*(Fraction const &obj) const
 
 Fraction Fraction::operator*(float const &obj) const
 {
-	float result = (float)(this->numerator / this->denominator) * obj;
-    return Fraction(1,1);
-}
-
-Fraction Fraction::operator*(const int &obj) const{
-	Fraction result(*this);
-    result.numerator = this->numerator * obj;
-    result.reduce();
+	Fraction result(0,1);
+	float sub = (float)this->numerator / (float)this->denominator * obj;
+	result.floatToFraction(sub);
     return result;
 }
 
@@ -169,144 +147,148 @@ const Fraction operator*(const float &f, const Fraction &frac)
 // The / operator to divide two fractions and return their quotient as another fraction in reduced form.
 Fraction Fraction::operator/(Fraction const &obj) const
 {
-	Fraction a(5, 3);
-	return a;
+	Fraction result(*this);
+	result.numerator = this->numerator * obj.denominator;
+	result.denominator = this->denominator * obj.numerator;
+	result.reduce();
+	return result;
 }
 
-Fraction Fraction::operator/(float const &obj) const
+Fraction Fraction::operator/(float const &f) const
 {
-	float result = (float)(this->numerator / this->denominator) - obj;
-	return Fraction(1,1);
-}
-
-Fraction Fraction::operator/(const int &obj) const{
-	if (obj == 0)
+	if (f == 0)
 	{
 		throw runtime_error("Division by zero");
 	}
-	
-	Fraction result(*this);
-    result.denominator = this->denominator * obj;
-    result.reduce();
+	Fraction result(0,1);
+	float div = ((float)this->numerator / (float)this->denominator) / f;
+	result.floatToFraction(div);
     return result;
 }
 
 
 const Fraction operator/(const float &f, const Fraction &frac)
 {
-	return Fraction(1, 1);
+	if(frac == 0){
+		throw runtime_error("Division by zero");
+	}
+	Fraction result(frac);
+	float div = ((float) frac.numerator / (float) frac.denominator) / f;
+	result.floatToFraction(div);
+	return result;
 }
 
 // The == operator to compare two fractions for equality and return true or false.
 bool Fraction::operator==(Fraction const &obj) const
 {
-	return (this->numerator == obj.denominator) && (this->denominator == obj.denominator);
+	return (this->numerator == obj.numerator) && (this->denominator == obj.denominator);
 }
 
 bool Fraction::operator==(float const &obj) const
 {
-	float f = this->numerator / this->denominator;
+	float f = (float)this->numerator / (float)this->denominator;
 	return f == obj;
 }
 
 bool operator==(const float &f, const Fraction &frac)
 {
-	float frac_ = frac.numerator / frac.denominator;
+	float frac_ = (float)frac.numerator / (float)frac.denominator;
 	return frac_ == f;
 }
 
 // All comparison operations (>,<,>=,<=)
 bool Fraction::operator>(Fraction const &obj) const
 {
-	bool a;
-	if (*this - obj > 0)
+	Fraction sub = *this - obj;
+	float sub_ = (float)sub.numerator / (float)sub.denominator;
+	if (sub_ > 0)
 	{
-		a = true;
+		return true;
 	}
-
-	return a;
+	return false;
 }
 
-bool Fraction::operator>(float const &obj) const
+bool Fraction::operator>(float const &f) const
 {
-	float frac = this->numerator / this->denominator;
-	return frac > obj;
+	float frac = (float)this->numerator / (float)this->denominator;
+	return frac > f;
 }
 
 bool operator>(const float &f, const Fraction &frac)
 {
-	float frac_ = frac.numerator / frac.denominator;
+	float frac_ = (float)frac.numerator / (float)frac.denominator;
 	return frac_ > f;}
 
 
 bool Fraction::operator<(Fraction const &obj) const
 {
-	bool a;
-	if ((*this - obj) < 0)
+	Fraction sub = *this - obj;
+	float sub_ = (float)sub.numerator / (float)sub.denominator;
+	if (sub_ < 0)
 	{
-		a = true;
+		return true;
 	}
-	return a;
+	return false;
 }
 
-bool Fraction::operator<(float const &obj) const
+bool Fraction::operator<(float const &f) const
 {
-	float frac = this->numerator / this->denominator;
-	return frac < obj;
+	float frac = (float)this->numerator / (float)this->denominator;
+	return frac < f;
 }
 
 bool operator<(const float &f, const Fraction &frac)
 {
-	float frac_ = frac.numerator / frac.denominator;
+	float frac_ = (float)frac.numerator / (float)frac.denominator;
 	return frac_ < f;
 }
 
 
 bool Fraction::operator>=(Fraction const &obj) const
 {
-	bool a;
-	if ((*this - obj) >= 0)
+	Fraction sub = *this - obj;
+	float sub_ = (float)sub.numerator / (float)sub.denominator;
+	if (sub_ >= 0)
 	{
-		a = true;
+		return true;
 	}
-
-	return a;
+	return false;
 }
 
-bool Fraction::operator>=(float const &obj) const
+bool Fraction::operator>=(float const &f) const
 {
-	float frac = this->numerator / this->denominator;
-	return frac >= obj;
+	float frac = (float)this->numerator / (float)this->denominator;
+	return frac >= f;
 }
 
 bool operator>=(const float &f, const Fraction &frac)
 {
-	float frac_ = frac.numerator / frac.denominator;
+	float frac_ = (float)frac.numerator / (float)frac.denominator;
 	return frac_ >= f;
 }
 
 
 bool Fraction::operator<=(Fraction const &obj) const
 {
-	bool a;
-	if ((*this - obj) <= 0)
+	Fraction sub = *this - obj;
+	float sub_ = (float)sub.numerator / (float)sub.denominator;
+	if (sub_ <= 0)
 	{
-		a = true;
+		return true;
 	}
-
-	return a;
+	return false;
 }
 
-bool Fraction::operator<=(float const &obj) const
+bool Fraction::operator<=(float const &f) const
 {
-	float frac = this->numerator / this->denominator;
-	return frac <= obj;
+	float frac = (float)this->numerator / (float)this->denominator;
+	return frac <= f;
 	
 }
 
 bool operator<=(const float &f, const Fraction &frac)
 {
-	float frac_ = frac.numerator / frac.denominator;
+	float frac_ = (float)frac.numerator / (float)frac.denominator;
 	return frac_ <= f;
 }
 
@@ -352,10 +334,6 @@ ostream &operator<<(ostream &out, const Fraction &frac)
 // The >> operator to read a fraction from an input stream by taking two integers as input.
 istream &operator>>(istream &in, Fraction &frac)
 {
-	// char c;
-	// in >> frac.get_numerator() >> c >> frac.get_denominator();
-	// return in;
-
 	int numerator, denominator;
 	in >> numerator >> denominator;
 	frac = Fraction(numerator, denominator);
