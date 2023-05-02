@@ -2,6 +2,7 @@
 #include <sstream>
 #include <iostream>
 #include <stdexcept>
+#include <limits>
 
 using namespace std;
 using namespace ariel;
@@ -11,7 +12,7 @@ Fraction::Fraction(int numerator, int denominator) : // List initialization so t
 {
 	if (denominator == 0)
 	{
-		throw runtime_error("Denominator is zero. What a loser");
+		throw std::invalid_argument("Denominator is zero. What a loser");
 	}
 	reduce();
 }
@@ -86,10 +87,35 @@ void Fraction::floatToFraction(float num){
 	}
 }
 
+float Fraction::roundToThree(){
+	float res = (float)(this->numerator) / (float)(this->denominator);
+	res = res * 1000;
+	int bfr = res;
+	int aftr = (int)(res * 10 - (int)(res)*10);
+	if (aftr > 5)
+	{
+		bfr += 1;
+	}
+	res = (float)(bfr) / 1000;
+	return res;
+}
 
 // The + operator to add two fractions and return their sum as another fraction in reduced form.
 Fraction Fraction::operator+(Fraction const &obj) const
 { 
+	int64_t numer1 = static_cast<int64_t>(this->numerator * obj.denominator);
+	int64_t numer2 = static_cast<int64_t>(obj.numerator * this->denominator);
+	int64_t denom = static_cast<int64_t>(this->denominator * obj.denominator);
+	int64_t numer = numer1 + numer2;
+
+	if (numer > std::numeric_limits<int>::max() ||
+		numer < std::numeric_limits<int>::min() ||
+		denom > std::numeric_limits<int>::max() ||
+		denom < std::numeric_limits<int>::min()) {
+        
+		throw std::overflow_error("Overflow error");
+    }
+
 	Fraction result(*this);
 	result.numerator = this->numerator * obj.denominator + obj.numerator * this->denominator;
 	result.denominator = this->denominator * obj.denominator;
@@ -113,6 +139,19 @@ const Fraction operator+(const float &num, const Fraction &frac)
 // The - operator to subtract two fractions and return their difference as another fraction in reduced form.
 Fraction Fraction::operator-(Fraction const &obj) const
 {
+	int64_t numer1 = static_cast<int64_t>(this->numerator) * static_cast<int64_t>(obj.denominator);
+	int64_t numer2 = static_cast<int64_t>(obj.numerator) * static_cast<int64_t>(this->denominator);
+	int64_t denom = static_cast<int64_t>(this->denominator) * static_cast<int64_t>(obj.denominator);
+	int64_t numer = numer1 - numer2;
+
+	if (numer > std::numeric_limits<int>::max() ||
+		numer < std::numeric_limits<int>::min() ||
+		denom > std::numeric_limits<int>::max() ||
+		denom < std::numeric_limits<int>::min()) {
+        
+		throw std::overflow_error("Overflow error");
+    }
+
 	Fraction result(*this);
     result.numerator = this->numerator * obj.denominator - obj.numerator * this->denominator;
 	result.denominator = this->denominator * obj.denominator;
@@ -128,24 +167,41 @@ Fraction Fraction::operator-(float const &obj) const
 
 	Fraction other(obj);
 	result = *this - other;
-	
     return result;
 }
 
 const Fraction operator-(const float &num, const Fraction &frac)
 {
-	Fraction result = frac - num;
-	result.numerator = (-1) * result.numerator;
-	return result;
+	// Fraction result = frac - num;
+	// result.numerator = (-1) * result.numerator;
+	// result.reduce();
+	Fraction other(num);
+	Fraction result = other - frac;
+	float res = result.roundToThree();
+	Fraction fnl(res);
+	return fnl;
 }
 
 //* The * operator to multiply two fractions and return their product as another fraction in reduced form.
 Fraction Fraction::operator*(Fraction const &obj) const
 {
-	int numer = this->numerator * obj.numerator;
-    int denom = this->denominator * obj.denominator;
-    Fraction result(numer, denom);
+	int64_t numer = static_cast<int64_t>(this->numerator) * static_cast<int64_t>(obj.numerator);
+	int64_t denom = static_cast<int64_t>(this->denominator) * static_cast<int64_t>(obj.denominator);
+
+	if (numer > std::numeric_limits<int>::max() ||
+		numer < std::numeric_limits<int>::min() ||
+		denom > std::numeric_limits<int>::max() ||
+		denom < std::numeric_limits<int>::min()) {
+        
+		throw std::overflow_error("Overflow error");
+    }
+
+	int nmr = this->numerator * obj.numerator;
+    int dnm = this->denominator * obj.denominator;
+
+    Fraction result(nmr, dnm);
     result.reduce();
+
     return result;
 }
 
@@ -155,9 +211,11 @@ Fraction Fraction::operator*(float const &num) const
 	if(num == 1){
 		return result;
 	}
-	float mul = (float)this->numerator * num / (float)this->denominator;
+	// float mul = (float)this->numerator * num / (float)this->denominator;
 	// float sub = (float)this->numerator / (float)this->denominator * f;
-	result.floatToFraction(mul);
+	// result.floatToFraction(mul);
+	Fraction other(num);
+	result = result * other;
     return result;
 }
 
@@ -169,10 +227,30 @@ const Fraction operator*(const float &num, const Fraction &frac)
 // The / operator to divide two fractions and return their quotient as another fraction in reduced form.
 Fraction Fraction::operator/(Fraction const &obj) const
 {
-	Fraction result(*this);
-	result.numerator = this->numerator * obj.denominator;
-	result.denominator = this->denominator * obj.numerator;
-	result.reduce();
+	if (obj == 0)
+	{
+		throw std::runtime_error("Division by zero");
+	}
+
+	// int64_t numer = static_cast<int64_t>(this->numerator * obj.denominator);
+	// int64_t denom = static_cast<int64_t>(this->denominator * obj.numerator);
+
+	// if (numer > std::numeric_limits<int>::max() ||
+	// 	numer < std::numeric_limits<int>::min() ||
+	// 	denom > std::numeric_limits<int>::max() ||
+	// 	denom < std::numeric_limits<int>::min()) {
+        
+	// 	throw std::overflow_error("Overflow error");
+    // }
+	
+	// Fraction result(*this);
+	// result.numerator = this->numerator * obj.denominator;
+	// result.denominator = this->denominator * obj.numerator;
+	// result.reduce();
+
+	Fraction inverse(obj.denominator, obj.numerator);
+	Fraction result = *this * inverse;
+	
 	return result;
 }
 

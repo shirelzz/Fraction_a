@@ -15,6 +15,7 @@ private:
 	void prev();
 	void reduce();
 	void floatToFraction(float num);
+	float roundToThree();
 
 public:
 
