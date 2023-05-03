@@ -103,9 +103,9 @@ float Fraction::roundToThree(){
 // The + operator to add two fractions and return their sum as another fraction in reduced form.
 Fraction Fraction::operator+(Fraction const &obj) const
 { 
-	int64_t numer1 = static_cast<int64_t>(this->numerator * obj.denominator);
-	int64_t numer2 = static_cast<int64_t>(obj.numerator * this->denominator);
-	int64_t denom = static_cast<int64_t>(this->denominator * obj.denominator);
+	int64_t numer1 = static_cast<int64_t>(this->numerator) * static_cast<int64_t>(obj.denominator);
+	int64_t numer2 = static_cast<int64_t>(obj.numerator) * static_cast<int64_t>(this->denominator);
+	int64_t denom = static_cast<int64_t>(this->denominator) * static_cast<int64_t>(obj.denominator);
 	int64_t numer = numer1 + numer2;
 
 	if (numer > std::numeric_limits<int>::max() ||
@@ -116,18 +116,15 @@ Fraction Fraction::operator+(Fraction const &obj) const
 		throw std::overflow_error("Overflow error");
     }
 
-	Fraction result(*this);
-	result.numerator = this->numerator * obj.denominator + obj.numerator * this->denominator;
-	result.denominator = this->denominator * obj.denominator;
-	result.reduce();
+	Fraction result(static_cast<int>(numer), static_cast<int>(denom));
+
 	return result;
 }
 
-Fraction Fraction::operator+(float const &num) const
+Fraction Fraction::operator+(float const &obj) const
 { 
-	Fraction result(0,1);
-	float add = (float)this->numerator / (float)this->denominator + num;
-	result.floatToFraction(add);
+	Fraction other(obj);
+	Fraction result = *this + other;
     return result;
 }
 
@@ -152,10 +149,7 @@ Fraction Fraction::operator-(Fraction const &obj) const
 		throw std::overflow_error("Overflow error");
     }
 
-	Fraction result(*this);
-    result.numerator = this->numerator * obj.denominator - obj.numerator * this->denominator;
-	result.denominator = this->denominator * obj.denominator;
-    result.reduce();
+	Fraction result(static_cast<int>(numer), static_cast<int>(denom));
     return result;
 }
 
@@ -170,9 +164,7 @@ const Fraction operator-(const float &num, const Fraction &frac)
 {
 	Fraction other(num);
 	Fraction result = other - frac;
-	float res = result.roundToThree();
-	Fraction fnl(res);
-	return fnl;
+	return result;
 }
 
 //* The * operator to multiply two fractions and return their product as another fraction in reduced form.
@@ -191,8 +183,8 @@ Fraction Fraction::operator*(Fraction const &obj) const
 
 	int nmr = static_cast<int>(numer);
     int dnm = static_cast<int>(denom);
+	
     Fraction result(nmr, dnm);
-    result.reduce();
     return result;
 }
 
@@ -421,6 +413,10 @@ istream &operator>>(istream &input, Fraction &frac)
 	if (input.fail())
 	{
 		throw std::runtime_error("You need to insert 2 integers.");
+	}
+	if (denominator == 0)
+	{
+		throw std::runtime_error("Denominator cannot be zero");
 	}
 	
 	frac = Fraction(numerator, denominator);
