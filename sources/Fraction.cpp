@@ -161,20 +161,13 @@ Fraction Fraction::operator-(Fraction const &obj) const
 
 Fraction Fraction::operator-(float const &obj) const
 {
-	Fraction result;
-	// float sub = (float)this->numerator / (float)this->denominator - obj;
-	// result.floatToFraction(sub);
-
 	Fraction other(obj);
-	result = *this - other;
+	Fraction result = *this - other;
     return result;
 }
 
 const Fraction operator-(const float &num, const Fraction &frac)
 {
-	// Fraction result = frac - num;
-	// result.numerator = (-1) * result.numerator;
-	// result.reduce();
 	Fraction other(num);
 	Fraction result = other - frac;
 	float res = result.roundToThree();
@@ -196,12 +189,10 @@ Fraction Fraction::operator*(Fraction const &obj) const
 		throw std::overflow_error("Overflow error");
     }
 
-	int nmr = this->numerator * obj.numerator;
-    int dnm = this->denominator * obj.denominator;
-
+	int nmr = static_cast<int>(numer);
+    int dnm = static_cast<int>(denom);
     Fraction result(nmr, dnm);
     result.reduce();
-
     return result;
 }
 
@@ -211,9 +202,7 @@ Fraction Fraction::operator*(float const &num) const
 	if(num == 1){
 		return result;
 	}
-	// float mul = (float)this->numerator * num / (float)this->denominator;
-	// float sub = (float)this->numerator / (float)this->denominator * f;
-	// result.floatToFraction(mul);
+
 	Fraction other(num);
 	result = result * other;
     return result;
@@ -232,25 +221,9 @@ Fraction Fraction::operator/(Fraction const &obj) const
 		throw std::runtime_error("Division by zero");
 	}
 
-	// int64_t numer = static_cast<int64_t>(this->numerator * obj.denominator);
-	// int64_t denom = static_cast<int64_t>(this->denominator * obj.numerator);
-
-	// if (numer > std::numeric_limits<int>::max() ||
-	// 	numer < std::numeric_limits<int>::min() ||
-	// 	denom > std::numeric_limits<int>::max() ||
-	// 	denom < std::numeric_limits<int>::min()) {
-        
-	// 	throw std::overflow_error("Overflow error");
-    // }
-	
-	// Fraction result(*this);
-	// result.numerator = this->numerator * obj.denominator;
-	// result.denominator = this->denominator * obj.numerator;
-	// result.reduce();
-
 	Fraction inverse(obj.denominator, obj.numerator);
 	Fraction result = *this * inverse;
-	
+
 	return result;
 }
 
@@ -260,16 +233,15 @@ Fraction Fraction::operator/(float const &num) const
 	{
 		throw runtime_error("Division by zero");
 	}
-	Fraction result;
-	// float div = ((float)this->numerator / (float)this->denominator) / num;
-	// result.floatToFraction(div);
 
 	Fraction other(num);
+
 	if (other == 0)
 	{
 		throw runtime_error("Division by zero");
 	}
-	result = *this / other;
+
+	Fraction result = *this / other;
     return result;
 }
 
